@@ -14,7 +14,7 @@ services:
     volumes:
       - /opt/etcd:/opt/etcd/data
   kube-apiserver:
-    image: dkhub.funceme.br:444/unisp/kubernetes/kube-apiserver:1.9.8
+    image: jonascavalcantineto/kube-apiserver:1.9.8
     restart: always
     container_name: kube-apiserver
     hostname: kube-apiserver
@@ -22,9 +22,9 @@ services:
       - 6443:6443
     privileged: true
     environment:
-      - ETCD_SERVER=etcd.master.funceme.br
-      - APISERVER_IP=deckard.funceme.br
-      - CLUSTER_NAME=funceme.local
+      - ETCD_SERVER=<dns_name_etcd_server>
+      - APISERVER_IP=<dns_name_api_kubernetes>
+      - CLUSTER_NAME=<cluster_name>
     volumes:
       - /mnt/nas/kubernetes/certs:/opt/kubernetes/certs/
   kube-controller-manager:
@@ -36,7 +36,7 @@ services:
       - 10252:10252
     privileged: true
     environment:
-      - CLUSTER_NAME=funceme.local
+      - CLUSTER_NAME=<cluster_name>
     volumes:
       - /mnt/nas/kubernetes/certs:/opt/kubernetes/certs/
   kube-scheduler:
