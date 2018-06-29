@@ -1,0 +1,51 @@
+version: '3'
+services:
+  etcd:
+    image: dkhub.funceme.br:444/unisp/kubernetes/etcdserver:2.3.8
+    restart: always
+    container_name: etcd
+    hostname: etcd
+    ports: 
+      - 2379:2379
+      - 2380:2380
+    privileged: true
+    environment:
+      - ETCD_PREFIX=/funceme.local/network
+    volumes:
+      - /opt/etcd:/opt/etcd/data
+  kube-apiserver:
+    image: dkhub.funceme.br:444/unisp/kubernetes/kube-apiserver:1.9.8
+    restart: always
+    container_name: kube-apiserver
+    hostname: kube-apiserver
+    ports: 
+      - 6443:6443
+    privileged: true
+    environment:
+      - ETCD_SERVER=etcd.master.funceme.br
+      - APISERVER_IP=deckard.funceme.br
+      - CLUSTER_NAME=funceme.local
+    volumes:
+      - /mnt/nas/kubernetes/certs:/opt/kubernetes/certs/
+  kube-controller-manager:
+    image: dkhub.funceme.br:444/unisp/kubernetes/kube-controller-manager:1.9.8
+    restart: always
+    container_name: kube-controller-manager
+    hostname: kube-controller-manager
+    ports: 
+      - 10252:10252
+    privileged: true
+    environment:
+      - CLUSTER_NAME=funceme.local
+    volumes:
+      - /mnt/nas/kubernetes/certs:/opt/kubernetes/certs/
+  kube-scheduler:
+    image: dkhub.funceme.br:444/unisp/kubernetes/kube-scheduler:1.9.8
+    restart: always
+    container_name: kube-scheduler
+    hostname: kube-scheduler
+    ports: 
+      - 10251:10251
+    privileged: true
+    volumes:
+      - /mnt/nas/kubernetes/certs:/opt/kubernetes/certs/

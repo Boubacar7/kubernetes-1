@@ -1,0 +1,32 @@
+version: '3'
+services:
+  kubelet:
+      image: dkhub.funceme.br:444/unisp/kubernetes/kubelet:1.9.8
+      restart: always
+      container_name: kubelet
+      hostname: barbarian
+      network_mode: "host"
+      ports: 
+        - 10250:10250
+        - 10255:10255 
+      privileged: true
+      environment:
+        - ETCD_SERVER=etcd.master.funceme.br
+        - ETCD_PREFIX=/funceme.local/network
+        - CLUSTER_NAME=funceme.local
+      volumes:
+        - /mnt/nas/kubernetes/certs:/opt/kubernetes/certs/
+        - /sys/fs/cgroup:/sys/fs/cgroup
+  kube-proxy:
+      image: dkhub.funceme.br:444/unisp/kubernetes/kube-proxy:1.9.8
+      restart: always
+      container_name: kube-proxy
+      hostname: kube-proxy
+      network_mode: "host"
+      privileged: true
+      environment:
+        - APISERVER_IP=deckard.funceme.br
+        - HOSTNAME_OVERRIDE=barbarian
+      volumes:
+        - /mnt/nas/kubernetes/certs:/opt/kubernetes/certs/
+        - /sys/fs/cgroup:/sys/fs/cgroup
